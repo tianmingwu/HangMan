@@ -29,7 +29,19 @@ class Hangman
         while (true)
         {
             Console.WriteLine("Player A: Please type in a word:");
-            string? word = Console.ReadLine();
+            string word;
+            ConsoleKeyInfo cfi;
+            StringBuilder wordSB = new StringBuilder();
+
+            while (true)
+            {
+                cfi = Console.ReadKey(true);
+                if (cfi.Key == ConsoleKey.Enter) break;
+                else wordSB.Append(cfi.KeyChar);
+            }
+
+            word = wordSB.ToString();
+
             if (word != null && word.Length > 0)
             {
                 Word = word;
@@ -69,11 +81,18 @@ class Hangman
     }
     public void GetLetter()
     {
-        Char letter;
+        ConsoleKeyInfo cki;
+        Char letter = '*';
 
         Console.WriteLine("Player B: Please input a letter");
-        letter = Console.ReadKey().KeyChar;
-        Console.WriteLine();
+        do{
+            cki = Console.ReadKey();
+            if (cki.Key != ConsoleKey.Enter) 
+            {
+                letter = cki.KeyChar;
+                Console.WriteLine();
+            }
+        } while (cki.Key == ConsoleKey.Enter);
 
         int i = 0;
         bool found = false;
