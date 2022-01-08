@@ -1,17 +1,27 @@
 ﻿using System.Text;
 
 Hangman hangman = new Hangman();
-hangman.Draw();
+
+do{
+    hangman.GetLetter();
+    hangman.Draw();
+} while (!hangman.IsDead() && !hangman.IsRevealed());
 
 class Hangman
 {   
     private int Life;
-    private string? Word;
-    private StringBuilder revWord = new StringBuilder("*");
-
+    private string Word="";
+    private StringBuilder revWord = new StringBuilder();
+    private List<string> Lines;
     public Hangman()
     {
         Life = 5;
+        string Head = "  -  \n/   \\\n\\   /\n  -  \n";
+        string Neck = "  |  \n";
+        string Arm = "-- --\n";
+        string Body = "  |  \n  |  \n";
+        string Leg = "/   \\\n";
+        Lines = new List<string> {Head, Neck, Arm, Body, Leg};
         GetWord();
     }
     public void GetWord()//how to do letters only?
@@ -23,7 +33,7 @@ class Hangman
             if (word != null && word.Length > 0)
             {
                 Word = word;
-                for(int i=1;i<word.Length;i++)
+                for(int i=0;i<word.Length;i++)
                 {
                     revWord.Append("*");
                 }
@@ -39,37 +49,46 @@ class Hangman
     {
         return Life < 1;
     }
-
     public bool IsRevealed()
     {
         return !revWord.ToString().Contains("*");
     }
     public void Draw()
     {
-        string head = "  -  \n/   \\\n\\   /\n  -  \n";
-        string neck = "  |  \n  |  \n";
-        string arm = "-- --\n";
-        string body = "  |  \n  |  \n";
-        string leg = "/   \\\n";
-
-        string[] lines = {head, neck, arm, body, leg};
-
         Console.WriteLine(revWord.ToString());
 
-        if (IsRevealed())
-        {
-            Console.WriteLine("You Win, player B!");
-        }
-        else if (IsDead())
-        {
-            Console.WriteLine("Hangman is dead. Game over, player B!");
-        }
+        if (IsRevealed()) Console.WriteLine("You Win, player B!");
+        else if (IsDead()) Console.WriteLine("Hangman is dead. Game over, player B!");
         else
         {
-            for(int i=1; i<=Life; i++)
+            for(int i=0; i<Life; i++)
                 {
-                    Console.Write(lines[i-1]);
+                    Console.Write(Lines[i]);
                 }
         }
+    }
+    public void GetLetter()
+    {
+        Char letter;
+
+        Console.WriteLine("Player B: Please input a letter");
+        letter = Console.ReadKey().KeyChar;
+        Console.WriteLine();
+
+        int i = 0;
+        bool found = false;
+        do{
+            i = Word.IndexOf(letter, i);
+            if (i != -1)
+            {
+                found = true;
+                revWord[i] = letter;
+                i++;
+            }
+            else
+            {
+                if (!found) Life -= 1;
+            }
+        } while (i != -1);
     }
 }
